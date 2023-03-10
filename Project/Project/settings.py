@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os #pour Neo4J
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%1q7wxd&$xzee5l!24m&-5e0hdj1eecya^e1-#-llk(2m%e5-n'
+SECRET_KEY = '....your secret key ....' # --- the one indicated in your settings.py, cut an paste it here
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['addresse_ip_ton_pc','127.0.0.1']
 
 
 # Application definition
@@ -38,11 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrap5',
+    'django_neomodel',
+    'corsheaders', #pour papoter avec des ip differentes de la nôtre
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -50,12 +54,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ALLOWED_ORIGINS = [ "http://127.0.0.1:5173"] #pour autoriser localhost:5173
+
 ROOT_URLCONF = 'Project.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [str(BASE_DIR.joinpath('.\Project\\templates'))],
+        'DIRS': [str(BASE_DIR.joinpath('sellers/templates'))],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,6 +87,14 @@ DATABASES = {
     }
 }
 
+#neo4j+s://user:mdp@numero_instance.neo4j.io:7687 <- port par defaut des instances auraDB pour la connexion en neo4j+s
+NEOMODEL_NEO4J_BOLT_URL = os.environ.get('NEO4J_BOLT_URL','neo4j+s://user:mdp@numero_instance.neo4j.io:7687')
+
+# you are free to add this configurations
+NEOMODEL_SIGNALS = True
+NEOMODEL_FORCE_TIMEZONE = False
+NEOMODEL_ENCRYPTED_CONNECTION = True
+NEOMODEL_MAX_POOL_SIZE = 50
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -122,3 +136,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
